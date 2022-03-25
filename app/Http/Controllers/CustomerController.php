@@ -23,7 +23,8 @@ class CustomerController extends Controller
         // $customers = Customer::orderBy('id','DESC')->paginate(10);
         $customers = Customer::withTrashed()->orderBy('id', 'DESC')->paginate(10);
         // dd($customers);
-        return View::make('customer.index', compact('customers'));
+        //return view('customer.index', compact('customers'));
+        return view("customer.index", ["customers" => $customers]);
     }
 
     /**
@@ -33,7 +34,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        return View::make('customer.create');
+        return view('customer.create');
     }
 
     /**
@@ -130,15 +131,13 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = Customer::findOrFail($id)->delete();
+        $customer = Customer::findOrFail($id);
         $customer->delete();
         return Redirect::to('/customer')->with('success', 'Customer deleted!');
     }
     public function restore($id)
     {
-
-        Customer::withTrashed()->where('id', $id)->restore();
-        //Customer::onlyTrashed()->findOrFail($id)->restore();
-        return  Redirect::route('customer.index')->with('success', 'customer restored successfully!');
+        Customer::onlyTrashed()->findOrFail($id)->restore();
+        return Redirect::route("customer.index")->with("success","Customer Data Restored!");
     }
 }
